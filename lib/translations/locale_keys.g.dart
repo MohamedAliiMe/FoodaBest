@@ -1,0 +1,59 @@
+// DO NOT EDIT. This is code generated via package=easy_localization/generate.dart
+
+abstract class LocaleKeys {
+  static const foodaBest = 'foodaBest';
+  static const hello = 'hello';
+  static const more = 'more';
+  static const home = 'home';
+  static const profile = 'profile';
+  static const search = 'search';
+  static const editProfile = 'editProfile';
+  static const notifications = 'notifications';
+  static const language = 'language';
+  static const contact = 'contact';
+  static const policy = 'policy';
+  static const logout = 'logout';
+  static const login = 'login';
+  static const required = 'required';
+  static const emailNotValid = 'emailNotValid';
+  static const nameLengthError = 'nameLengthError';
+  static const invalidUsername = 'invalidUsername';
+  static const notValidMobile = 'notValidMobile';
+  static const minLengthShouldBe = 'minLengthShouldBe';
+  static const onlyLetters = 'onlyLetters';
+  static const error = 'error';
+  static const someThingWentWrong = 'someThingWentWrong';
+  static const doneSuccessfully = 'doneSuccessfully';
+  static const welcomeTo = 'welcomeTo';
+  static const enterYourPhoneNumberToSignIn = 'enterYourPhoneNumberToSignIn';
+  static const orCreateAnAccountIfYouDontHaveOneYet =
+      'orCreateAnAccountIfYouDontHaveOneYet';
+  static const continueText = 'continueText';
+  static const terms = 'terms';
+  static const privacy = 'privacy';
+  static const andSign = 'andSign';
+  static const byContinuingYouAcceptOur = 'byContinuingYouAcceptOur';
+  static const changeNumber = 'changeNumber';
+  static const enterAuthenticationCode = 'enterAuthenticationCode';
+  static const enterThe6DigitCodeThatWeHaveSentViaThePhoneNumber =
+      'enterThe6DigitCodeThatWeHaveSentViaThePhoneNumber';
+  static const pleaseEnterAValid6DigitCode = 'pleaseEnterAValid6DigitCode';
+  static const resendCode = 'resendCode';
+  static const mobileNumber = 'mobileNumber';
+  static const skipText = 'skipText';
+  static const letsGetToKnowYou = 'letsGetToKnowYou';
+  static const firstName = 'firstName';
+  static const lastName = 'lastName';
+  static const whatIsYourGender = 'whatIsYourGender';
+  static const enterYourDateOfBirth = 'enterYourDateOfBirth';
+  static const letsStart = 'letsStart';
+  static const man = 'man';
+  static const woman = 'woman';
+  static const preferNotToSay = 'preferNotToSay';
+  static const enterFirstName = 'enterFirstName';
+  static const enterLastName = 'enterLastName';
+  static const selectYourDateOfBirth = 'selectYourDateOfBirth';
+  static const phoneNumberIsRequired = 'phoneNumberIsRequired';
+  static const noCountriesFound = 'noCountriesFound';
+  static const selectCountry = 'selectCountry';
+}
