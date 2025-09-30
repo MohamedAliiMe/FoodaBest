@@ -15,6 +15,12 @@ import 'package:injectable/injectable.dart' as _i526;
 import '../../features/authentication/data/services/authentication_service.dart'
     as _i894;
 import '../../features/authentication/logic/authentication_cubit.dart' as _i854;
+import '../../features/product_analysis/data/repositories/ingredients_analysis_service.dart'
+    as _i136;
+import '../../features/product_analysis/data/repositories/product_analysis_service.dart'
+    as _i892;
+import '../../features/product_analysis/logic/product_analysis_cubit.dart'
+    as _i795;
 import '../../features/profile/data/services/profile_service.dart' as _i510;
 import '../../features/profile/logic/profile_cubit.dart' as _i559;
 import '../utilities/app_data_storage.dart' as _i102;
@@ -36,8 +42,14 @@ _i174.GetIt $initGetIt(
   gh.factory<_i691.ThemeCubit>(() => _i691.ThemeCubit());
   gh.factory<_i102.DataStorage>(() => _i102.DataStorage());
   gh.factory<_i559.ProfileCubit>(() => _i559.ProfileCubit());
+  gh.factory<_i136.IngredientsAnalysisService>(
+      () => _i136.IngredientsAnalysisService());
+  gh.factory<_i892.ProductAnalysisService>(
+      () => _i892.ProductAnalysisService());
   gh.lazySingleton<_i894.AuthenticationService>(
       () => _i894.AuthenticationService());
+  gh.factory<_i795.ProductAnalysisCubit>(
+      () => _i795.ProductAnalysisCubit(gh<_i892.ProductAnalysisService>()));
   gh.factory<_i854.AuthenticationCubit>(() => _i854.AuthenticationCubit(
         gh<_i894.AuthenticationService>(),
         gh<_i102.DataStorage>(),

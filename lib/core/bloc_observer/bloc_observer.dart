@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fooda_best/features/authentication/logic/authentication_cubit.dart';
+import 'package:fooda_best/features/product_analysis/logic/product_analysis_cubit.dart';
 import 'package:logger/logger.dart';
 
 var logger = Logger(
@@ -105,6 +106,39 @@ class MyBlocObserver extends BlocObserver {
         result += '\n📱 User JSON: ${json.toString()}';
       }
 
+      // Handle ProductAnalysisState
+      if (obj is ProductAnalysisState) {
+        try {
+          // Extract product data
+          if (obj.product != null) {
+            final productJson = obj.product!.toJson();
+            result += '\n🛍️ REAL PRODUCT JSON: ${productJson.toString()}';
+            result += '\n📊 Product Name: ${obj.product!.name}';
+            result += '\n🏷️ Product Brand: ${obj.product!.brands}';
+            result += '\n⭐ NutriScore: ${obj.product!.nutriScoreGrade}';
+          }
+
+          // Extract analysis data
+          if (obj.analysis != null) {
+            final analysisJson = obj.analysis!.toJson();
+            result += '\n🤖 ANALYSIS JSON: ${analysisJson.toString()}';
+          }
+
+          // Extract alternative products
+          if (obj.alternativeProducts != null &&
+              obj.alternativeProducts!.isNotEmpty) {
+            result += '\n🔄 ALTERNATIVES JSON: [';
+            for (int i = 0; i < obj.alternativeProducts!.length; i++) {
+              final altJson = obj.alternativeProducts![i].toJson();
+              result += '\n  ${i + 1}. ${altJson.toString()}';
+            }
+            result += '\n]';
+          }
+        } catch (e) {
+          result += '\n❌ Error extracting ProductAnalysisState data: $e';
+        }
+      }
+
       // Try direct toJson() call on the object itself
       try {
         final json = obj.toJson();
@@ -122,6 +156,10 @@ class MyBlocObserver extends BlocObserver {
           'model',
           'item',
           'entity',
+          'barcode',
+          'analysis',
+          'product',
+          'alternativeProducts',
         ];
 
         for (final prop in commonModelProps) {
@@ -161,8 +199,14 @@ class MyBlocObserver extends BlocObserver {
           return obj?.item;
         case 'entity':
           return obj?.entity;
-        default:
-          return null;
+        case 'barcode':
+          return obj?.barcode;
+        case 'analysis':
+          return obj?.analysis;
+        case 'product':
+          return obj?.product;
+        case 'alternativeProducts':
+          return obj?.alternativeProducts;
       }
     } catch (e) {
       return null;

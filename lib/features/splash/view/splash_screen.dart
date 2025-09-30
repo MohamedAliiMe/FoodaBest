@@ -7,7 +7,7 @@ import 'package:fooda_best/core/app_authentication_state/app_authentication_stat
 import 'package:fooda_best/core/dependencies/dependency_init.dart';
 import 'package:fooda_best/core/utilities/app_data_storage.dart';
 import 'package:fooda_best/features/authentication/pages/view/phone_auth_page.dart';
-import 'package:fooda_best/features/profile/pages/view/profile_page.dart';
+import 'package:fooda_best/features/product_analysis/pages/view/product_analysis_page.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,21 +18,26 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
+  // Animation Controllers
   late AnimationController _logoController;
   late AnimationController _textController;
   late AnimationController _progressController;
 
+  // Logo Animations - من منتصف الأسفل للوسط ثم للشمال
   late Animation<double> _logoOpacity;
   late Animation<Offset> _logoFromBottomCenter;
   late Animation<Offset> _logoToLeft;
   late Animation<double> _logoScale;
 
+  // Text Animation - حروف تُكتب واحد تلو الآخر
   late List<AnimationController> _letterControllers;
   final String _textLetters = "FOODABEST";
 
+  // Progress Animations - تبدأ فوراً
   late Animation<double> _progressOpacity;
 
-  int _currentFocusIndex = 0;
+  // Focus state - يبدأ فوراً
+  int _currentFocusIndex = 0; // يبدأ بـ A
   Timer? _focusTimer;
 
   @override
@@ -44,6 +49,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _setupAnimations() {
+    // Progress Controller - يبدأ فوراً
     _progressController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -53,11 +59,13 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(parent: _progressController, curve: Curves.easeIn),
     );
 
+    // Logo Controller - أسرع وأكثر سلاسة
     _logoController = AnimationController(
       duration: const Duration(milliseconds: 2500),
       vsync: this,
     );
 
+    // Logo opacity (فوري)
     _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _logoController,
@@ -65,22 +73,31 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
+    // Logo من منتصف الأسفل (كأنه خارج من فجوة) للوسط
     _logoFromBottomCenter =
-        Tween<Offset>(begin: const Offset(0, 3.0), end: Offset.zero).animate(
+        Tween<Offset>(
+          begin: const Offset(0, 3.0), // من أسفل منتصف الشاشة (خارج من فجوة)
+          end: Offset.zero, // للوسط
+        ).animate(
           CurvedAnimation(
             parent: _logoController,
             curve: const Interval(0.0, 0.5, curve: Curves.fastOutSlowIn),
           ),
         );
 
-    _logoToLeft = Tween<Offset>(begin: Offset.zero, end: const Offset(-0.6, 0))
-        .animate(
+    // Logo من الوسط للشمال (بعد وقفة)
+    _logoToLeft =
+        Tween<Offset>(
+          begin: Offset.zero,
+          end: const Offset(-0.6, 0), // للشمال أكثر
+        ).animate(
           CurvedAnimation(
             parent: _logoController,
             curve: const Interval(0.6, 1.0, curve: Curves.fastOutSlowIn),
           ),
         );
 
+    // Logo يصغر عند الانتقال للشمال
     _logoScale = Tween<double>(begin: 1.0, end: 0.7).animate(
       CurvedAnimation(
         parent: _logoController,
@@ -88,11 +105,13 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
+    // Text Controller - للتحكم في بدء كتابة الحروف
     _textController = AnimationController(
-      duration: const Duration(milliseconds: 150),
+      duration: const Duration(milliseconds: 150), // قصير فقط للتحكم
       vsync: this,
     );
 
+    // Letter-by-letter controllers
     _letterControllers = List.generate(
       _textLetters.length,
       (index) => AnimationController(
@@ -103,15 +122,20 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _startSequence() async {
+    // بدء مؤشر التقدم والفوكس فوراً
     _progressController.forward();
     _startFocusAnimation();
 
+    // انتظار قليل ثم بدء الشعار
     await Future.delayed(const Duration(milliseconds: 500));
 
+    // المرحلة 1: الشعار يخرج من فجوة في منتصف الأسفل ويذهب للوسط
     _logoController.forward();
 
+    // انتظار حتى يصل الشعار للوسط ويقف قليلاً
     await Future.delayed(const Duration(milliseconds: 1200));
 
+    // المرحلة 2: النص يبدأ في الكتابة حرف حرف مع حركة الشعار للشمال
     _animateLetters();
   }
 
@@ -125,6 +149,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _startFocusAnimation() {
+    // بدء الفوكس فوراً
     _focusTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (mounted) {
         setState(() {
@@ -156,7 +181,7 @@ class _SplashScreenState extends State<SplashScreen>
         builder: (context) =>
             stateEnum == AppAuthenticationStateEnum.unauthorizedState
             ? const PhoneAuthPage()
-            : const ProfilePage(),
+            : const ProductAnalysisPage(),
       ),
     );
   }
@@ -201,11 +226,13 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
 
+          // الشعار والنص في الوسط
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // الشعار المتحرك
                 AnimatedBuilder(
                   animation: _logoController,
                   builder: (context, child) {
@@ -236,6 +263,7 @@ class _SplashScreenState extends State<SplashScreen>
                       ? _letterControllers[0]
                       : _textController,
                   builder: (context, child) {
+                    // حساب كم حرف ظهر
                     int visibleLetters = 0;
                     for (int i = 0; i < _letterControllers.length; i++) {
                       if (_letterControllers[i].value > 0.2) visibleLetters++;
@@ -250,9 +278,7 @@ class _SplashScreenState extends State<SplashScreen>
                             boxShadow: visibleLetters < _textLetters.length
                                 ? [
                                     BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.08,
-                                      ),
+                                      color: Colors.black.withOpacity(0.08),
                                       blurRadius: 2,
                                       offset: const Offset(1, 1),
                                       spreadRadius: 0,

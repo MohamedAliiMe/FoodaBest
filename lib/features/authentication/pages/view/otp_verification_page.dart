@@ -13,7 +13,7 @@ import 'package:fooda_best/core/widgets/custom_continue_button.dart';
 import 'package:fooda_best/core/widgets/custom_otp_field.dart';
 import 'package:fooda_best/features/authentication/logic/authentication_cubit.dart';
 import 'package:fooda_best/features/authentication/pages/view/profile_setup_page.dart';
-import 'package:fooda_best/features/profile/pages/view/profile_page.dart';
+import 'package:fooda_best/features/product_analysis/pages/view/product_analysis_page.dart';
 import 'package:fooda_best/gen/assets.gen.dart';
 import 'package:fooda_best/translations/locale_keys.g.dart';
 
@@ -112,7 +112,9 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
             if (hasCompleteProfile) {
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()),
+                MaterialPageRoute(
+                  builder: (context) => const ProductAnalysisPage(),
+                ),
                 (route) => false,
               );
             } else {

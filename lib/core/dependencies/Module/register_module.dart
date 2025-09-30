@@ -3,7 +3,6 @@ import 'package:fooda_best/core/dependencies/interceptor/api_interceptor.dart';
 import 'package:fooda_best/core/networking/api_path.dart';
 import 'package:injectable/injectable.dart';
 
-
 /// this class register the third party plugins
 @module
 abstract class RegisterModule {

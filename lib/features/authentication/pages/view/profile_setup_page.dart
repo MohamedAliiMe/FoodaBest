@@ -12,7 +12,7 @@ import 'package:fooda_best/core/widgets/custom_continue_button.dart';
 import 'package:fooda_best/core/widgets/custom_date_picker.dart';
 import 'package:fooda_best/core/widgets/custom_text_field.dart';
 import 'package:fooda_best/features/authentication/logic/authentication_cubit.dart';
-import 'package:fooda_best/features/profile/pages/view/profile_page.dart';
+import 'package:fooda_best/features/product_analysis/pages/view/product_analysis_page.dart';
 import 'package:fooda_best/translations/locale_keys.g.dart';
 
 class ProfileSetupPage extends StatefulWidget {
@@ -148,7 +148,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
             state.user!.firstName!.isNotEmpty &&
             state.user!.lastName != null &&
             state.user!.lastName!.isNotEmpty) {
-          popAllAndPushPage(context, const ProfilePage());
+          popAllAndPushPage(context, const ProductAnalysisPage());
         }
       },
       child: SafeArea(

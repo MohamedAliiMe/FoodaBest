@@ -13,6 +13,7 @@ import 'package:fooda_best/core/utilities/configs/themes/core_theme.dart';
 import 'package:fooda_best/core/utilities/environment/environment_configurations.dart';
 import 'package:fooda_best/core/utilities/routes_navigator/route_generator.dart';
 import 'package:fooda_best/features/authentication/logic/authentication_cubit.dart';
+import 'package:fooda_best/features/product_analysis/logic/product_analysis_cubit.dart';
 import 'package:fooda_best/translations/codegen_loader.g.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -68,6 +69,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<AuthenticationCubit>(
           create: (context) => getIt<AuthenticationCubit>(),
+        ),
+        BlocProvider<ProductAnalysisCubit>(
+          create: (context) => getIt<ProductAnalysisCubit>(),
         ),
       ],
       child: MaterialChild(),

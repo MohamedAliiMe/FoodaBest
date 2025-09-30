@@ -1,3 +1,3 @@
 class AppApiPaths {
-  static const String baseUrl = 'https://';
+  static const String baseUrl = 'https://world.openfoodfacts.org';
 }
