@@ -1,12 +1,14 @@
+import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fooda_best/core/widgets/custom_continue_button.dart';
-import 'package:fooda_best/features/authentication/data/models/user_model/user_model.dart';
+import 'package:fooda_best/core/widgets/custom_text_field.dart';
 import 'package:fooda_best/features/product_analysis/pages/view/product_detail_page.dart';
+import 'package:fooda_best/translations/locale_keys.g.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -26,19 +28,14 @@ class ProductAnalysisPage extends StatefulWidget {
 
 class _ProductAnalysisPageState extends State<ProductAnalysisPage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
-  // Scanner
   MobileScannerController? _scannerController;
 
-  // Animation Controllers
   late AnimationController _resultAnimationController;
   late Animation<Offset> _resultSlideAnimation;
 
-  // Image Picker
   final ImagePicker _imagePicker = ImagePicker();
-  final GlobalKey _cameraKey = GlobalKey();
   final GlobalKey _repaintBoundaryKey = GlobalKey();
 
-  // State
   bool _hasScanned = false;
   bool _isInitialized = false;
   bool _isTorchOn = false;
@@ -117,16 +114,13 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
     if (barcodes.isNotEmpty && barcodes.first.rawValue != null) {
       final String barcode = barcodes.first.rawValue!;
 
-      // Validate barcode length
       if (barcode.length < 6 || barcode.length > 14) {
         return;
       }
 
-      // Store the last detected barcode for manual capture
       _lastDetectedBarcode = barcode;
       log('📱 Barcode detected and stored: $barcode');
 
-      // Only auto-scan if not in manual mode and not loading
       if (!_hasScanned && !_isLoading && !_isManualMode && !_isDialogOpen) {
         log('✅ Auto-scanning barcode: $barcode');
         _startProductScan(barcode);
@@ -144,12 +138,11 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
     _scannerController?.stop();
     _resultAnimationController.forward();
 
-    // Get user profile and start scanning
     final userModel = context.read<AuthenticationCubit>().state.user;
     if (userModel != null) {
       context.read<ProductAnalysisCubit>().scanProduct(barcode, userModel);
     } else {
-      context.read<ProductAnalysisCubit>().reset();
+      context.read<ProductAnalysisCubit>().resetScanner();
       setState(() {
         _isLoading = false;
         _hasScanned = false;
@@ -161,7 +154,7 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
   }
 
   void _resetScanner() {
-    context.read<ProductAnalysisCubit>().reset();
+    context.read<ProductAnalysisCubit>().resetScanner();
 
     setState(() {
       _hasScanned = false;
@@ -179,7 +172,7 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
 
   void _showManualCodeDialog() {
     setState(() {
-      _isDialogOpen = true; // تعطيل الكاميرا
+      _isDialogOpen = true;
     });
 
     showDialog(
@@ -187,7 +180,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
       barrierDismissible: true,
       builder: (context) => _buildManualCodeDialog(),
     ).then((_) {
-      // لما الـ dialog يتقفل، نشغل الكاميرا تاني
       setState(() {
         _isDialogOpen = false;
       });
@@ -195,8 +187,7 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
   }
 
   void _manualCapture() async {
-    // Manual capture - use the last detected barcode from live scanner
-    _showSnackBar('Capturing and analyzing...');
+    _showSnackBar(LocaleKeys.capturingAndAnalyzing.tr());
 
     final userModel = context.read<AuthenticationCubit>().state.user;
     if (userModel != null) {
@@ -209,7 +200,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
       _scannerController?.stop();
       _resultAnimationController.forward();
 
-      // Use the last detected barcode from the live scanner
       if (_lastDetectedBarcode != null && _lastDetectedBarcode!.isNotEmpty) {
         log(
           '✅ Manual capture - using last detected barcode: $_lastDetectedBarcode',
@@ -221,85 +211,10 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
       } else {
         log('❌ No barcode detected yet, please point camera at barcode first');
         _showSnackBar(
-          'No barcode detected. Please point camera at a barcode first.',
+          LocaleKeys.noBarcodeDetectedPleasePointCameraAtBarcode.tr(),
         );
         _resetScanner();
       }
-    }
-  }
-
-  Future<void> _analyzeImageForBarcode(
-    File imageFile,
-    UserModel userModel,
-  ) async {
-    try {
-      log('🔍 Analyzing captured image for barcode...');
-
-      // Try to detect barcode from the current scanner controller first
-      if (_scannerController != null) {
-        try {
-          log('📸 Trying to detect barcode from current scanner...');
-          final result = await _scannerController!.analyzeImage(imageFile.path);
-
-          if (result != null && result.barcodes.isNotEmpty) {
-            final barcode = result.barcodes.first.rawValue;
-            if (barcode != null && barcode.isNotEmpty) {
-              log('✅ Barcode detected from current scanner: $barcode');
-              context.read<ProductAnalysisCubit>().scanProduct(
-                barcode,
-                userModel,
-              );
-              return;
-            }
-          }
-        } catch (e) {
-          log('⚠️ Current scanner analysis failed: $e');
-        }
-      }
-
-      // Create a new scanner controller for image analysis
-      log('🔄 Creating new scanner for image analysis...');
-      final scannerController = MobileScannerController(
-        detectionSpeed: DetectionSpeed.noDuplicates,
-        facing: CameraFacing.back,
-        torchEnabled: false,
-        formats: [
-          BarcodeFormat.ean13,
-          BarcodeFormat.ean8,
-          BarcodeFormat.upcA,
-          BarcodeFormat.upcE,
-          BarcodeFormat.code128,
-          BarcodeFormat.code39,
-          BarcodeFormat.qrCode,
-        ],
-      );
-
-      // Analyze the captured image
-      final result = await scannerController.analyzeImage(imageFile.path);
-      await scannerController.dispose();
-
-      if (result != null && result.barcodes.isNotEmpty) {
-        final barcode = result.barcodes.first.rawValue;
-        if (barcode != null && barcode.isNotEmpty) {
-          log('✅ Barcode detected from new scanner: $barcode');
-          context.read<ProductAnalysisCubit>().scanProduct(barcode, userModel);
-          return;
-        }
-      }
-
-      // If no barcode found, try the full image analysis
-      log('🔄 No barcode found, trying full image analysis...');
-      context.read<ProductAnalysisCubit>().captureAndAnalyzeImage(
-        imageFile,
-        userModel,
-      );
-    } catch (e) {
-      log('❌ Error analyzing image: $e');
-      // Fallback to full image analysis
-      context.read<ProductAnalysisCubit>().captureAndAnalyzeImage(
-        imageFile,
-        userModel,
-      );
     }
   }
 
@@ -315,10 +230,9 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
         imageQuality: 80,
       );
 
-      if (image != null) {
+      if (image != null && mounted) {
         log('Image selected: ${image.path}');
 
-        // Process the selected image
         final userModel = context.read<AuthenticationCubit>().state.user;
         if (userModel != null && mounted) {
           setState(() {
@@ -329,10 +243,9 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
 
           _resultAnimationController.forward();
 
-          // For now, we'll analyze the image file
           if (mounted) {
             context.read<ProductAnalysisCubit>().captureAndAnalyzeImage(
-              File(image.path),
+              image.path,
               userModel,
             );
           }
@@ -365,24 +278,20 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
         bottom: false,
         child: Column(
           children: [
-            // Top App Bar
             _buildTopAppBar(),
 
             SizedBox(height: 10.h),
-            // Main Content
+
             Expanded(
               child: Stack(
                 children: [
-                  // Camera/Scanner View
                   _buildCameraView(),
 
-                  // Controls when not showing results
                   if (!_showResults) ...[
                     _buildScannerOverlay(),
                     _buildBottomControls(),
                   ],
 
-                  // Results Panel
                   if (_showResults) _buildResultsPanel(),
                 ],
               ),
@@ -400,7 +309,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // User Profile Section
           BlocBuilder<AuthenticationCubit, AuthenticationState>(
             builder: (context, state) {
               final user = state.user;
@@ -437,11 +345,9 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
             },
           ),
 
-          // Search Button
           GestureDetector(
             onTap: () {
               _logout();
-              // _showSnackBar('Search feature coming soon');
             },
             child: Container(
               width: 40.w,
@@ -475,7 +381,7 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
               CircularProgressIndicator(color: AllColors.black),
               SizedBox(height: 16.h),
               Text(
-                'Initializing camera...',
+                LocaleKeys.initializingCamera.tr(),
                 style: tm14.copyWith(color: AllColors.black),
               ),
             ],
@@ -505,7 +411,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
         ),
         child: GestureDetector(
           onHorizontalDragEnd: (details) {
-            // دخول Manual Mode فوراً عند السحب يمين/شمال
             if (details.primaryVelocity!.abs() > 300 && !_isManualMode) {
               setState(() {
                 _isManualMode = true;
@@ -513,7 +418,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
             }
           },
           onDoubleTap: () {
-            // الخروج من Manual Mode بـ double tap
             if (_isManualMode) {
               setState(() {
                 _isManualMode = false;
@@ -522,19 +426,16 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
           },
           child: Stack(
             children: [
-              // Camera feed
               Positioned.fill(
                 child: RepaintBoundary(
                   key: _repaintBoundaryKey,
                   child: MobileScanner(
                     controller: _scannerController!,
-                    onDetect:
-                        _onBarcodeDetect, // Always detect barcodes, even in manual mode
+                    onDetect: _onBarcodeDetect,
                   ),
                 ),
               ),
 
-              // Torch button
               Positioned(
                 top: 20.h,
                 right: 20.w,
@@ -565,9 +466,7 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
   }
 
   Widget _buildScannerOverlay() {
-    // Only show in auto mode
     if (_isManualMode) return const SizedBox.shrink();
-
     return Center(
       child: SizedBox(
         width: 200.w,
@@ -587,7 +486,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Gallery button (always visible)
             _buildControlButton(
               icon: Icons.image_outlined,
               onTap: _pickImageFromGallery,
@@ -595,57 +493,37 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
               iconColor: AllColors.white,
             ),
 
-            // Manual capture button (center) - only shows in manual mode
             if (_isManualMode)
-              // دائرة تصوير واضحة ومميزة
               GestureDetector(
                 onTap: _manualCapture,
                 child: Container(
-                  width: 70.w,
-                  height: 70.h,
+                  margin: EdgeInsets.only(bottom: 40.4.h),
+                  width: 80.6.w,
+                  height: 80.6.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AllColors.white,
-                    border: Border.all(
-                      color: AllColors.grey.withValues(alpha: 0.4),
-                      width: 3.w,
+                    border: Border.all(color: AllColors.white, width: 5),
+                  ),
+                  child: Container(
+                    width: 70.w,
+                    height: 70.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AllColors.black, width: 3.5),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AllColors.black.withValues(alpha: 0.25),
-                        blurRadius: 12.r,
-                        offset: Offset(0, 4.h),
+                    child: Center(
+                      child: Container(
+                        width: 65.w,
+                        height: 65.w,
+                        decoration: const BoxDecoration(
+                          color: AllColors.whiteBase,
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ],
+                    ),
                   ),
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: AllColors.black,
-                    size: 32.sp,
-                  ),
-                ),
-              )
-            else
-              // في Auto Mode - فقط مساحة فارغة للتوضيح
-              Container(
-                width: 60.w,
-                height: 60.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AllColors.white.withValues(alpha: 0.1),
-                  border: Border.all(
-                    color: AllColors.white.withValues(alpha: 0.3),
-                    width: 1.w,
-                  ),
-                ),
-                child: Icon(
-                  Icons.swipe,
-                  color: AllColors.white.withValues(alpha: 0.6),
-                  size: 24.sp,
                 ),
               ),
-
-            // Keyboard button (Enter Code Manually)
             _buildControlButton(
               icon: Icons.keyboard_outlined,
               onTap: _showManualCodeDialog,
@@ -753,32 +631,27 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
   }
 
   Widget _buildContent(BuildContext context, ProductAnalysisState state) {
-    switch (state.status) {
-      case ProductAnalysisStatus.initial:
-        return _buildEmptyState();
-      case ProductAnalysisStatus.loading:
-        if (state.product != null) {
-          return _buildLoadingState('Analyzing ingredients...');
-        } else {
-          return _buildLoadingState('Scanning product...');
-        }
-      case ProductAnalysisStatus.loaded:
-        if (state.product != null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ProductDetailPage.show(
-              context,
-              product: state.product!,
-              aiSummary: state.analysis?.summary,
-              alternativeProducts: state.alternativeProducts,
-            );
-            _resetScanner();
-          });
-          return _buildLoadingState('Loading product details...');
-        } else {
-          return _buildEmptyState();
-        }
-      case ProductAnalysisStatus.error:
-        return _buildErrorState(state.errorMessage ?? 'Unknown error occurred');
+    if (state.isLoading) {
+      if (state.product != null) {
+        return _buildLoadingState(LocaleKeys.analyzingIngredients.tr());
+      } else {
+        return _buildLoadingState(LocaleKeys.scanningProduct.tr());
+      }
+    } else if (state.failedState) {
+      return _buildErrorState(state.errorMessage);
+    } else if (state.product != null && state.analysis != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ProductDetailPage.show(
+          context,
+          product: state.product!,
+          aiSummary: state.analysis?.summary,
+          alternativeProducts: state.alternativeProducts,
+        );
+        _resetScanner();
+      });
+      return _buildLoadingState(LocaleKeys.loadingProductDetails.tr());
+    } else {
+      return _buildEmptyState();
     }
   }
 
@@ -792,7 +665,7 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
             Icon(Icons.qr_code_scanner, size: 64.sp, color: AllColors.grey),
             SizedBox(height: 16.h),
             Text(
-              'Scan a product to get started',
+              LocaleKeys.scanAProductToGetStarted.tr(),
               style: tm16.copyWith(color: AllColors.grey),
             ),
           ],
@@ -820,20 +693,20 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
     );
   }
 
-  Widget _buildErrorState(String message) {
+  Widget _buildErrorState(String? message) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 60.h),
+        padding: EdgeInsets.all(16.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.error_outline, size: 64.sp, color: AllColors.red),
             SizedBox(height: 16.h),
-            Text('Error', style: tb18.copyWith(color: AllColors.red)),
+            Text('Error', style: tb20.copyWith(color: AllColors.red)),
             SizedBox(height: 8.h),
             Text(
-              message,
-              style: tm14.copyWith(color: AllColors.grey),
+              message ?? 'An error occurred',
+              style: tm16.copyWith(color: AllColors.grey),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 24.h),
@@ -851,7 +724,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
 
   Widget _buildManualCodeDialog() {
     final TextEditingController codeController = TextEditingController();
-
     return Dialog(
       backgroundColor: AllColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
@@ -860,19 +732,18 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Enter Code Manually',
+                  LocaleKeys.enterCodeManually.tr(),
                   style: tb18.copyWith(
                     color: AllColors.black,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
+                  onTap: () => popScreen(context),
                   child: Icon(Icons.close, color: AllColors.black, size: 24.sp),
                 ),
               ],
@@ -880,7 +751,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
 
             SizedBox(height: 24.h),
 
-            // Input field
             Container(
               decoration: BoxDecoration(
                 border: Border.all(
@@ -888,22 +758,20 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
                 ),
                 borderRadius: BorderRadius.circular(12.r),
               ),
-              child: TextField(
+              child: CustomTextField(
                 controller: codeController,
                 keyboardType: TextInputType.number,
                 maxLength: 14,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(16.w),
-                  counterText: '',
-                  hintText: 'Enter product barcode',
-                  hintStyle: tm14.copyWith(color: AllColors.grey),
-                ),
-                style: tm16.copyWith(color: AllColors.black),
+                hint: LocaleKeys.enterProductBarcode.tr(),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return LocaleKeys.pleaseEnterAValidBarcode.tr();
+                  }
+                  return null;
+                },
               ),
             ),
 
-            // Character counter
             Align(
               alignment: Alignment.centerRight,
               child: Padding(
@@ -922,7 +790,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
 
             SizedBox(height: 24.h),
 
-            // Done button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -933,7 +800,7 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
                     _startProductScan(code);
                   } else {
                     _showSnackBar(
-                      'Please enter a valid barcode (at least 6 digits)',
+                      LocaleKeys.pleaseEnterAValidBarcode6Digits.tr(),
                     );
                   }
                 },
@@ -946,7 +813,7 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
                   ),
                 ),
                 child: Text(
-                  'Done',
+                  LocaleKeys.done.tr(),
                   style: tb16.copyWith(
                     color: AllColors.white,
                     fontWeight: FontWeight.w600,
@@ -989,7 +856,6 @@ class CornerBorderPainter extends CustomPainter {
     const double cornerLength = 25.0;
     const double cornerRadius = 2.0;
 
-    // Top-left corner
     canvas.drawLine(
       const Offset(0, cornerRadius),
       const Offset(0, cornerLength),
@@ -1001,7 +867,6 @@ class CornerBorderPainter extends CustomPainter {
       paint,
     );
 
-    // Top-right corner
     canvas.drawLine(
       Offset(size.width - cornerLength, 0),
       Offset(size.width - cornerRadius, 0),
@@ -1013,7 +878,6 @@ class CornerBorderPainter extends CustomPainter {
       paint,
     );
 
-    // Bottom-right corner
     canvas.drawLine(
       Offset(size.width, size.height - cornerLength),
       Offset(size.width, size.height - cornerRadius),
@@ -1025,7 +889,6 @@ class CornerBorderPainter extends CustomPainter {
       paint,
     );
 
-    // Bottom-left corner
     canvas.drawLine(
       Offset(cornerLength, size.height),
       Offset(cornerRadius, size.height),

@@ -91,7 +91,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
         bloc: _authenticationCubit,
         listener: (context, state) {
           if (state.errorMessage != null) {
-            AppAlertDialog.showErrorBar(errorMessage: state.errorMessage);
+            AppAlertDialog.showErrorBarSafe(errorMessage: state.errorMessage);
             _hasNavigated = false;
           }
           if (!_hasNavigated && state.isAuthenticated && state.user != null) {
@@ -109,23 +109,28 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
               '👤 User data: firstName=${user.firstName}, lastName=${user.lastName}',
             );
 
-            if (hasCompleteProfile) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProductAnalysisPage(),
-                ),
-                (route) => false,
-              );
-            } else {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfileSetupPage(),
-                ),
-                (route) => false,
-              );
-            }
+            // Add a small delay to ensure any ongoing operations complete
+            Future.delayed(const Duration(milliseconds: 100), () {
+              if (context.mounted) {
+                if (hasCompleteProfile) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProductAnalysisPage(),
+                    ),
+                    (route) => false,
+                  );
+                } else {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileSetupPage(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              }
+            });
           }
         },
         child: Column(

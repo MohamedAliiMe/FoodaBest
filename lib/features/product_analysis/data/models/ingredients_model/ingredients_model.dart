@@ -20,8 +20,6 @@ class IngredientsModel {
   /// Any warnings or cautions about the ingredients
   final List<String>? warnings;
 
-  /// URL to an audio explanation (if generated)
-
   IngredientsModel({
     this.summary,
     this.allergens,

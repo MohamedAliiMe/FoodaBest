@@ -16,12 +16,13 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$ProductAnalysisState {
-  ProductAnalysisStatus get status => throw _privateConstructorUsedError;
+  bool get isLoading => throw _privateConstructorUsedError;
+  String? get errorMessage => throw _privateConstructorUsedError;
+  bool get failedState => throw _privateConstructorUsedError;
   ProductModel? get product => throw _privateConstructorUsedError;
   AnalysisModel? get analysis => throw _privateConstructorUsedError;
   List<ProductModel>? get alternativeProducts =>
       throw _privateConstructorUsedError;
-  String? get errorMessage => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ProductAnalysisStateCopyWith<ProductAnalysisState> get copyWith =>
@@ -35,11 +36,12 @@ abstract class $ProductAnalysisStateCopyWith<$Res> {
       _$ProductAnalysisStateCopyWithImpl<$Res, ProductAnalysisState>;
   @useResult
   $Res call(
-      {ProductAnalysisStatus status,
+      {bool isLoading,
+      String? errorMessage,
+      bool failedState,
       ProductModel? product,
       AnalysisModel? analysis,
-      List<ProductModel>? alternativeProducts,
-      String? errorMessage});
+      List<ProductModel>? alternativeProducts});
 }
 
 /// @nodoc
@@ -56,17 +58,26 @@ class _$ProductAnalysisStateCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
+    Object? isLoading = null,
+    Object? errorMessage = freezed,
+    Object? failedState = null,
     Object? product = freezed,
     Object? analysis = freezed,
     Object? alternativeProducts = freezed,
-    Object? errorMessage = freezed,
   }) {
     return _then(_value.copyWith(
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ProductAnalysisStatus,
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      failedState: null == failedState
+          ? _value.failedState
+          : failedState // ignore: cast_nullable_to_non_nullable
+              as bool,
       product: freezed == product
           ? _value.product
           : product // ignore: cast_nullable_to_non_nullable
@@ -79,10 +90,6 @@ class _$ProductAnalysisStateCopyWithImpl<$Res,
           ? _value.alternativeProducts
           : alternativeProducts // ignore: cast_nullable_to_non_nullable
               as List<ProductModel>?,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
     ) as $Val);
   }
 }
@@ -96,11 +103,12 @@ abstract class _$$ProductAnalysisStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {ProductAnalysisStatus status,
+      {bool isLoading,
+      String? errorMessage,
+      bool failedState,
       ProductModel? product,
       AnalysisModel? analysis,
-      List<ProductModel>? alternativeProducts,
-      String? errorMessage});
+      List<ProductModel>? alternativeProducts});
 }
 
 /// @nodoc
@@ -114,17 +122,26 @@ class __$$ProductAnalysisStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
+    Object? isLoading = null,
+    Object? errorMessage = freezed,
+    Object? failedState = null,
     Object? product = freezed,
     Object? analysis = freezed,
     Object? alternativeProducts = freezed,
-    Object? errorMessage = freezed,
   }) {
     return _then(_$ProductAnalysisStateImpl(
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ProductAnalysisStatus,
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      failedState: null == failedState
+          ? _value.failedState
+          : failedState // ignore: cast_nullable_to_non_nullable
+              as bool,
       product: freezed == product
           ? _value.product
           : product // ignore: cast_nullable_to_non_nullable
@@ -137,10 +154,6 @@ class __$$ProductAnalysisStateImplCopyWithImpl<$Res>
           ? _value._alternativeProducts
           : alternativeProducts // ignore: cast_nullable_to_non_nullable
               as List<ProductModel>?,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
     ));
   }
 }
@@ -149,16 +162,22 @@ class __$$ProductAnalysisStateImplCopyWithImpl<$Res>
 
 class _$ProductAnalysisStateImpl implements _ProductAnalysisState {
   _$ProductAnalysisStateImpl(
-      {this.status = ProductAnalysisStatus.initial,
+      {this.isLoading = false,
+      this.errorMessage,
+      this.failedState = false,
       this.product,
       this.analysis,
-      final List<ProductModel>? alternativeProducts,
-      this.errorMessage})
+      final List<ProductModel>? alternativeProducts})
       : _alternativeProducts = alternativeProducts;
 
   @override
   @JsonKey()
-  final ProductAnalysisStatus status;
+  final bool isLoading;
+  @override
+  final String? errorMessage;
+  @override
+  @JsonKey()
+  final bool failedState;
   @override
   final ProductModel? product;
   @override
@@ -175,11 +194,8 @@ class _$ProductAnalysisStateImpl implements _ProductAnalysisState {
   }
 
   @override
-  final String? errorMessage;
-
-  @override
   String toString() {
-    return 'ProductAnalysisState(status: $status, product: $product, analysis: $analysis, alternativeProducts: $alternativeProducts, errorMessage: $errorMessage)';
+    return 'ProductAnalysisState(isLoading: $isLoading, errorMessage: $errorMessage, failedState: $failedState, product: $product, analysis: $analysis, alternativeProducts: $alternativeProducts)';
   }
 
   @override
@@ -187,19 +203,28 @@ class _$ProductAnalysisStateImpl implements _ProductAnalysisState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ProductAnalysisStateImpl &&
-            (identical(other.status, status) || other.status == status) &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.failedState, failedState) ||
+                other.failedState == failedState) &&
             (identical(other.product, product) || other.product == product) &&
             (identical(other.analysis, analysis) ||
                 other.analysis == analysis) &&
             const DeepCollectionEquality()
-                .equals(other._alternativeProducts, _alternativeProducts) &&
-            (identical(other.errorMessage, errorMessage) ||
-                other.errorMessage == errorMessage));
+                .equals(other._alternativeProducts, _alternativeProducts));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, status, product, analysis,
-      const DeepCollectionEquality().hash(_alternativeProducts), errorMessage);
+  int get hashCode => Object.hash(
+      runtimeType,
+      isLoading,
+      errorMessage,
+      failedState,
+      product,
+      analysis,
+      const DeepCollectionEquality().hash(_alternativeProducts));
 
   @JsonKey(ignore: true)
   @override
@@ -212,22 +237,26 @@ class _$ProductAnalysisStateImpl implements _ProductAnalysisState {
 
 abstract class _ProductAnalysisState implements ProductAnalysisState {
   factory _ProductAnalysisState(
-      {final ProductAnalysisStatus status,
-      final ProductModel? product,
-      final AnalysisModel? analysis,
-      final List<ProductModel>? alternativeProducts,
-      final String? errorMessage}) = _$ProductAnalysisStateImpl;
+          {final bool isLoading,
+          final String? errorMessage,
+          final bool failedState,
+          final ProductModel? product,
+          final AnalysisModel? analysis,
+          final List<ProductModel>? alternativeProducts}) =
+      _$ProductAnalysisStateImpl;
 
   @override
-  ProductAnalysisStatus get status;
+  bool get isLoading;
+  @override
+  String? get errorMessage;
+  @override
+  bool get failedState;
   @override
   ProductModel? get product;
   @override
   AnalysisModel? get analysis;
   @override
   List<ProductModel>? get alternativeProducts;
-  @override
-  String? get errorMessage;
   @override
   @JsonKey(ignore: true)
   _$$ProductAnalysisStateImplCopyWith<_$ProductAnalysisStateImpl>

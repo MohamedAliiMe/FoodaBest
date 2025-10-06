@@ -247,6 +247,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   Future<void> updateProfile({
     required String firstName,
     required String lastName,
+    required String email,
     String? gender,
     DateTime? dateOfBirth,
   }) async {
@@ -256,6 +257,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       final result = await _authService.updateProfile(
         firstName: firstName,
         lastName: lastName,
+        email: email,
         gender: gender,
         dateOfBirth: dateOfBirth,
       );

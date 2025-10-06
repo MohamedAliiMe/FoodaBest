@@ -1,14 +1,13 @@
 part of 'product_analysis_cubit.dart';
 
-enum ProductAnalysisStatus { initial, loading, loaded, error }
-
 @freezed
 class ProductAnalysisState with _$ProductAnalysisState {
   factory ProductAnalysisState({
-    @Default(ProductAnalysisStatus.initial) ProductAnalysisStatus status,
+    @Default(false) bool isLoading,
+    String? errorMessage,
+    @Default(false) bool failedState,
     ProductModel? product,
     AnalysisModel? analysis,
     List<ProductModel>? alternativeProducts,
-    String? errorMessage,
   }) = _ProductAnalysisState;
 }

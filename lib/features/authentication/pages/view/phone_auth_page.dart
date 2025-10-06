@@ -95,20 +95,25 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         bloc: _authenticationCubit,
         listener: (context, state) {
           if (state.errorMessage != null) {
-            AppAlertDialog.showErrorBar(errorMessage: state.errorMessage);
+            AppAlertDialog.showErrorBarSafe(errorMessage: state.errorMessage);
             _hasNavigated = false;
           }
           if (state.verificationId != null &&
               state.phoneNumber != null &&
               !_hasNavigated) {
             _hasNavigated = true;
-            pushPage(
-              context,
-              OTPVerificationPage(
-                phoneNumber: state.phoneNumber!,
-                verificationId: state.verificationId!,
-              ),
-            );
+            // Add a small delay to ensure any ongoing operations complete
+            Future.delayed(const Duration(milliseconds: 100), () {
+              if (context.mounted) {
+                pushPage(
+                  context,
+                  OTPVerificationPage(
+                    phoneNumber: state.phoneNumber!,
+                    verificationId: state.verificationId!,
+                  ),
+                );
+              }
+            });
           }
         },
         child: Column(

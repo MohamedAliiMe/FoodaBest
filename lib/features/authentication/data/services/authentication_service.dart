@@ -139,6 +139,7 @@ class AuthenticationService {
   Future<DataState<UserModel>> updateProfile({
     required String firstName,
     required String lastName,
+    required String email,
     String? gender,
     DateTime? dateOfBirth,
   }) async {

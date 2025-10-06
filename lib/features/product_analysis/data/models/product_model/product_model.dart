@@ -17,6 +17,7 @@ class ProductModel {
   final Map<String, dynamic>? nutriments;
   final List<String>? traces;
   final List<String>? labels;
+  
   final String? errorMessage;
 
   ProductModel({

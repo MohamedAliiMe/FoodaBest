@@ -45,72 +45,58 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (label != null) ...[
-          Text(
-            label!,
-            style: useModernLabelStyle
-                ? tm14.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: AllColors.grey,
-                  )
-                : tr16.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AllColors.black,
-                  ),
-          ),
-          SizedBox(height: 8.h),
-        ],
-        TextFormField(
-          controller: controller,
-          validator: validator,
-          onChanged: onChanged,
-          onFieldSubmitted: onSubmitted,
-          keyboardType: keyboardType,
-          obscureText: obscureText,
-          maxLines: maxLines,
-          maxLength: maxLength,
-          enabled: enabled,
-          readOnly: readOnly,
-          focusNode: focusNode,
-          initialValue: initialValue,
-          style: tm16.copyWith(color: AllColors.black),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: tr16.copyWith(color: AllColors.grey),
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-            filled: true,
-            fillColor: AllColors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: AllColors.grayLight, width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: AllColors.grayLight, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: AllColors.grayLight, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: AllColors.red, width: 1),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: AllColors.red, width: 2),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 16.h,
-            ),
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AllColors.grayLight.withOpacity(0.5),
+          width: 1,
         ),
-      ],
+        borderRadius: BorderRadius.circular(10.r),
+        color: AllColors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (label != null) ...[
+            Padding(
+              padding: EdgeInsets.only(left: 12.w, top: 5.h, right: 12.w),
+              child: Text(
+                label!,
+                style: tr12.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: AllColors.black,
+                ),
+              ),
+            ),
+          ],
+
+          // Hidden TextFormField for input functionality
+          TextFormField(
+            controller: controller,
+            validator: validator,
+            onChanged: onChanged,
+            onFieldSubmitted: onSubmitted,
+            keyboardType: keyboardType,
+            obscureText: obscureText,
+            maxLines: maxLines,
+            maxLength: maxLength,
+            enabled: enabled,
+            readOnly: readOnly,
+            focusNode: focusNode,
+            initialValue: initialValue,
+            style: tm16.copyWith(color: AllColors.black),
+            decoration: InputDecoration(
+              hintStyle: tr16.copyWith(color: AllColors.grey),
+              hintText: hint,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 8.h,
+                horizontal: 12.w,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

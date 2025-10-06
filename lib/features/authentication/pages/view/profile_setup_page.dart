@@ -2,17 +2,20 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fooda_best/core/dependencies/dependency_init.dart';
 import 'package:fooda_best/core/functions/app_alert_dialog.dart';
 import 'package:fooda_best/core/utilities/app_validator.dart';
 import 'package:fooda_best/core/utilities/configs/app_typography.dart';
 import 'package:fooda_best/core/utilities/configs/colors.dart';
 import 'package:fooda_best/core/utilities/routes_navigator/navigator.dart';
+import 'package:fooda_best/core/widgets/base_flexiable_image.dart';
 import 'package:fooda_best/core/widgets/custom_continue_button.dart';
 import 'package:fooda_best/core/widgets/custom_date_picker.dart';
 import 'package:fooda_best/core/widgets/custom_text_field.dart';
 import 'package:fooda_best/features/authentication/logic/authentication_cubit.dart';
 import 'package:fooda_best/features/product_analysis/pages/view/product_analysis_page.dart';
+import 'package:fooda_best/gen/assets.gen.dart';
 import 'package:fooda_best/translations/locale_keys.g.dart';
 
 class ProfileSetupPage extends StatefulWidget {
@@ -26,6 +29,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
+  final _emailController = TextEditingController();
   final AuthenticationCubit _authenticationCubit = getIt<AuthenticationCubit>();
   String? _selectedGender;
   DateTime? _selectedDateOfBirth;
@@ -48,6 +52,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   void dispose() {
     _firstNameController.removeListener(_updateFormValidation);
     _lastNameController.removeListener(_updateFormValidation);
+    _emailController.removeListener(_updateFormValidation);
     _firstNameController.dispose();
     _lastNameController.dispose();
     _authenticationCubit.close();
@@ -88,6 +93,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         gender: _selectedGender,
+        email: _emailController.text,
         dateOfBirth: _selectedDateOfBirth,
       );
     }
@@ -102,13 +108,21 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: AllColors.white,
       centerTitle: false,
-      elevation: 0,
       leading: _currentStep > 0
-          ? IconButton(
-              icon: Icon(Icons.arrow_back, color: AllColors.black),
-              onPressed: _previousStep,
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 16.w),
+                GestureDetector(
+                  onTap: _previousStep,
+                  child: SvgPicture.asset(
+                    Assets.images.back,
+                    width: 24.w,
+                    height: 24.h,
+                  ),
+                ),
+              ],
             )
           : null,
       title: _currentStep == 1
@@ -156,7 +170,10 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                  vertical: _currentStep == 0 ? 0.h : 32.h,
+                ),
                 child: Form(key: _formKey, child: _buildCurrentStep()),
               ),
             ),
@@ -169,16 +186,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
 
   Container _buildBottomSection() {
     return Container(
-      decoration: BoxDecoration(
-        color: AllColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: AllColors.black.withValues(alpha: 0.05),
-            blurRadius: 10.r,
-            offset: Offset(0, -2.r),
-          ),
-        ],
-      ),
+      decoration: BoxDecoration(color: AllColors.white),
       child: Column(
         children: [
           _buildProgressBar(),
@@ -243,7 +251,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStepTitle(LocaleKeys.letsGetToKnowYou.tr()),
-        SizedBox(height: 40.h),
+        SizedBox(height: 32.h),
         _buildNameFields(),
       ],
     );
@@ -262,7 +270,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           controller: _firstNameController,
           validator: (value) => AppValidator.validatorName(value, context),
           onChanged: (value) => _updateFormValidation(),
-          useModernLabelStyle: false,
         ),
         SizedBox(height: 20.h),
         CustomTextField(
@@ -271,8 +278,17 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           controller: _lastNameController,
           validator: (value) => AppValidator.validatorName(value, context),
           onChanged: (value) => _updateFormValidation(),
-          useModernLabelStyle: false,
           keyboardType: TextInputType.name,
+        ),
+        SizedBox(height: 20.h),
+        CustomTextField(
+          label: LocaleKeys.email.tr(),
+          hint: LocaleKeys.enterEmail.tr(),
+          controller: _emailController,
+          validator: (value) => AppValidator.validatorEmail(value, context),
+          onChanged: (value) => _updateFormValidation(),
+
+          keyboardType: TextInputType.emailAddress,
         ),
       ],
     );
@@ -283,7 +299,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStepTitle(LocaleKeys.whatIsYourGender.tr()),
-        SizedBox(height: 40.h),
+        SizedBox(height: 32.h),
         _buildGenderOptions(),
       ],
     );
@@ -309,30 +325,32 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
       },
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
-        margin: EdgeInsets.only(bottom: 16.h),
+        padding: EdgeInsets.symmetric(vertical: 17.h, horizontal: 15.w),
+        margin: EdgeInsets.only(bottom: 20.h),
         decoration: BoxDecoration(
-          color: AllColors.white,
+          color: AllColors.whiteBase,
           border: Border.all(
-            color: isSelected ? AllColors.green : AllColors.transparent,
+            color: isSelected ? AllColors.blue : AllColors.transparent,
             width: isSelected ? 2.w : 0.w,
           ),
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(10.r),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              _getGenderIcon(gender),
-              color: isSelected ? AllColors.green : AllColors.black,
-              size: 24.sp,
+            FlexibleImage(
+              source: _getGenderIcon(gender),
+              color: isSelected ? AllColors.black : AllColors.grey,
             ),
             SizedBox(width: 5.w),
             Text(
               gender,
-              style: tr16.copyWith(
-                color: isSelected ? AllColors.green : AllColors.black,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              ),
+              style: !isSelected
+                  ? tr16.copyWith(
+                      color: isSelected ? AllColors.black : AllColors.grey,
+                    )
+                  : tm16.copyWith(color: AllColors.black),
             ),
           ],
         ),
@@ -403,13 +421,13 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     }
   }
 
-  IconData _getGenderIcon(String gender) {
+  String _getGenderIcon(String gender) {
     if (gender == LocaleKeys.man.tr()) {
-      return Icons.male;
+      return Assets.images.vector;
     } else if (gender == LocaleKeys.woman.tr()) {
-      return Icons.female;
+      return Assets.images.manIcon;
     } else {
-      return Icons.visibility_off;
+      return Assets.images.notSay;
     }
   }
 }

@@ -56,4 +56,63 @@ abstract class LocaleKeys {
   static const phoneNumberIsRequired = 'phoneNumberIsRequired';
   static const noCountriesFound = 'noCountriesFound';
   static const selectCountry = 'selectCountry';
+  static const tryAgain = 'tryAgain';
+  static const enterCodeManually = 'enterCodeManually';
+  static const enterBarcode = 'enterBarcode';
+  static const done = 'done';
+  static const pleaseEnterAValidBarcode = 'pleaseEnterAValidBarcode';
+  static const pleaseEnterAValidBarcodeAtLeast6Digits =
+      'pleaseEnterAValidBarcodeAtLeast6Digits';
+  static const scanAProductToGetStarted = 'scanAProductToGetStarted';
+  static const capturingAndAnalyzing = 'capturingAndAnalyzing';
+  static const noBarcodeDetected = 'noBarcodeDetected';
+  static const pleasePointCameraAtBarcode = 'pleasePointCameraAtBarcode';
+  static const noBarcodeDetectedPleasePointCameraAtBarcode =
+      'noBarcodeDetectedPleasePointCameraAtBarcode';
+  static const pleaseEnterAValidBarcode6Digits =
+      'pleaseEnterAValidBarcode6Digits';
+  static const scanAProductToGetStarted6Digits =
+      'scanAProductToGetStarted6Digits';
+  static const loadingProductDetails = 'loadingProductDetails';
+  static const analyzingIngredients = 'analyzingIngredients';
+  static const scanningProduct = 'scanningProduct';
+  static const emptyState = 'emptyState';
+  static const enterProductBarcode = 'enterProductBarcode';
+  static const initializingCamera = 'initializingCamera';
+  static const unknownErrorOccurred = 'unknownErrorOccurred';
+  static const productDetails = 'productDetails';
+  static const ingredients = 'ingredients';
+  static const addPhoto = 'addPhoto';
+  static const whereToFind = 'whereToFind';
+  static const alternativeProducts = 'alternativeProducts';
+  static const noAlternativesFound = 'noAlternativesFound';
+  static const score = 'score';
+  static const unknownIngredient = 'unknownIngredient';
+  static const betterAlternative = 'betterAlternative';
+  static const viewMore = 'viewMore';
+  static const unknownProduct = 'unknownProduct';
+  static const food = 'food';
+  static const nutriScore = 'nutriScore';
+  static const foodScore = 'foodScore';
+  static const overallFoodHealthRatingSystem = 'overallFoodHealthRatingSystem';
+  static const highNutritionalValueLowNutritionalValue =
+      'highNutritionalValueLowNutritionalValue';
+  static const nova = 'nova';
+  static const processed = 'processed';
+  static const genericErrorMessage = 'genericErrorMessage';
+  static const retry = 'retry';
+  static const wait = 'wait';
+  static const cancel = 'cancel';
+  static const errorDetails = 'errorDetails';
+  static const type = 'type';
+  static const context = 'context';
+  static const time = 'time';
+  static const justNow = 'justNow';
+  static const minutesAgo = 'minutesAgo';
+  static const hoursAgo = 'hoursAgo';
+  static const daysAgo = 'daysAgo';
+  static const networkErrorHelp = 'networkErrorHelp';
+  static const rateLimitHelp = 'rateLimitHelp';
+  static const email = 'email';
+  static const enterEmail = 'enterEmail';
 }
