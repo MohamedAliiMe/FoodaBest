@@ -106,7 +106,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
 
-
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 10.h,
@@ -143,7 +142,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
 
                 SizedBox(height: 20.h),
-
 
                 Column(
                   children: [
