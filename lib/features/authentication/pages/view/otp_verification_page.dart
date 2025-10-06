@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fooda_best/core/functions/app_alert_dialog.dart';
 import 'package:fooda_best/core/utilities/configs/app_typography.dart';
 import 'package:fooda_best/core/utilities/configs/colors.dart';
@@ -102,14 +103,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
                 user.lastName != null &&
                 user.lastName!.isNotEmpty;
             _hasNavigated = true;
-            log(
-              '🧭 User authenticated - Navigating to ${hasCompleteProfile ? "ProfilePage" : "ProfileSetupPage"}',
-            );
-            log(
-              '👤 User data: firstName=${user.firstName}, lastName=${user.lastName}',
-            );
 
-            // Add a small delay to ensure any ongoing operations complete
             Future.delayed(const Duration(milliseconds: 100), () {
               if (context.mounted) {
                 if (hasCompleteProfile) {
@@ -149,12 +143,13 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
                     padding: EdgeInsets.only(left: 16.w, top: 16.h),
                     child: Row(
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.arrow_back, color: AllColors.black),
-                          onPressed: () {
+                        GestureDetector(
+                          onTap: () {
                             popScreen(context);
                           },
+                          child: SvgPicture.asset(Assets.images.back),
                         ),
+
                         const Spacer(),
                         TextButton(
                           onPressed: () {

@@ -52,6 +52,12 @@ class $AssetsImagesGen {
   /// File path: assets/images/not-say.svg
   String get notSay => 'assets/images/not-say.svg';
 
+  /// File path: assets/images/score-a.svg
+  String get scoreA => 'assets/images/score-a.svg';
+
+  /// File path: assets/images/score-c.svg
+  String get scoreC => 'assets/images/score-c.svg';
+
   /// File path: assets/images/uploudPhoto.svg
   String get uploudPhoto => 'assets/images/uploudPhoto.svg';
 
@@ -71,6 +77,8 @@ class $AssetsImagesGen {
         keybord,
         manIcon,
         notSay,
+        scoreA,
+        scoreC,
         uploudPhoto
       ];
 }

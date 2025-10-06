@@ -529,7 +529,7 @@ class ProductAnalysisService {
           // Build parameter map for search - simple search without filters
           final parameters = <Parameter>[
             const PageNumber(page: 1),
-            const PageSize(size: 20),
+            const PageSize(size: 30),
             SearchTerms(terms: [ingredient]),
           ];
 
@@ -635,10 +635,10 @@ class ProductAnalysisService {
             ProductSearchQueryConfiguration(
               parametersList: [
                 const PageNumber(page: 1),
-                const PageSize(size: 10),
+                const PageSize(size: 20),
                 SearchTerms(
-                  terms: ingredients.take(2).toList(),
-                ), // Use first 2 ingredients
+                  terms: ingredients.take(3).toList(),
+                ), // Use first 3 ingredients
               ],
               fields: [
                 ProductField.BARCODE,
@@ -663,8 +663,8 @@ class ProductAnalysisService {
               ProductSearchQueryConfiguration(
                 parametersList: [
                   const PageNumber(page: 1),
-                  const PageSize(size: 10),
-                  SearchTerms(terms: ['healthy']),
+                  const PageSize(size: 15),
+                  SearchTerms(terms: ['healthy', 'organic']),
                 ],
                 fields: [
                   ProductField.BARCODE,
@@ -728,60 +728,8 @@ class ProductAnalysisService {
           log('Broader search failed: $e');
         }
 
-        log('No real products found, returning healthier alternatives');
-        return [
-          ProductModel(
-            barcode: '3017620422003',
-            name: 'Organic Quinoa & Chia Seeds',
-            imageUrl:
-                'https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.4.400.jpg',
-            nutriScoreGrade: 'a',
-            nutriments: {
-              'energy-kcal': 180,
-              'protein': 12,
-              'fat': 3,
-              'carbohydrates': 25,
-              'fiber': 8,
-              'salt': 0.1,
-            },
-            categories: ['superfood', 'organic', 'gluten-free'],
-            brands: 'SuperFood Co',
-          ),
-          ProductModel(
-            barcode: '3017620422004',
-            name: 'Plant-Based Protein Shake',
-            imageUrl:
-                'https://images.openfoodfacts.org/images/products/301/762/042/2004/front_en.4.400.jpg',
-            nutriScoreGrade: 'a',
-            nutriments: {
-              'energy-kcal': 90,
-              'protein': 15,
-              'fat': 1,
-              'carbohydrates': 8,
-              'sugars': 2,
-              'salt': 0.05,
-            },
-            categories: ['plant-based', 'protein', 'vegan'],
-            brands: 'Green Protein',
-          ),
-          ProductModel(
-            barcode: '3017620422005',
-            name: 'Raw Organic Nuts Mix',
-            imageUrl:
-                'https://images.openfoodfacts.org/images/products/301/762/042/2005/front_en.4.400.jpg',
-            nutriScoreGrade: 'a',
-            nutriments: {
-              'energy-kcal': 200,
-              'protein': 8,
-              'fat': 15,
-              'carbohydrates': 12,
-              'fiber': 6,
-              'sugars': 3,
-            },
-            categories: ['nuts', 'organic', 'raw'],
-            brands: 'Nature\'s Best',
-          ),
-        ];
+        log('No real products found, returning empty list');
+        return [];
       }
 
       return alternativeProducts;

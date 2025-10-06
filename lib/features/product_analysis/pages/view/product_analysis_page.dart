@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fooda_best/core/utilities/routes_navigator/app_routes.dart';
 import 'package:fooda_best/core/widgets/custom_continue_button.dart';
 import 'package:fooda_best/core/widgets/custom_text_field.dart';
 import 'package:fooda_best/features/product_analysis/pages/view/product_detail_page.dart';
@@ -15,8 +16,8 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../../core/utilities/configs/app_typography.dart';
 import '../../../../core/utilities/configs/colors.dart';
 import '../../../../core/utilities/routes_navigator/navigator.dart';
+import '../../../../core/widgets/base_flexiable_image.dart';
 import '../../../authentication/logic/authentication_cubit.dart';
-import '../../../authentication/pages/view/phone_auth_page.dart';
 import '../../logic/product_analysis_cubit.dart';
 
 class ProductAnalysisPage extends StatefulWidget {
@@ -263,13 +264,6 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void _logout() async {
-    await context.read<AuthenticationCubit>().signOut();
-    if (mounted) {
-      popAllAndPushPage(context, const PhoneAuthPage());
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -314,12 +308,25 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
               final user = state.user;
               return Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: AllColors.grey.withValues(alpha: 0.3),
-                    radius: 20.r,
-                    child: Text(
-                      user?.firstName?.substring(0, 1).toUpperCase() ?? 'J',
-                      style: tb16.copyWith(color: AllColors.black),
+                  GestureDetector(
+                    onTap: () {
+                      pushName(context, AppRoute.profilePage);
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: AllColors.grey.withValues(alpha: 0.3),
+                      radius: 20.r,
+                      child: user?.imageUrl != null
+                          ? FlexibleImage(
+                              source: user?.imageUrl!,
+                              fit: BoxFit.cover,
+                            )
+                          : Text(
+                              user?.displayName
+                                      ?.substring(0, 1)
+                                      .toUpperCase() ??
+                                  'Fooda Best',
+                              style: tb16.copyWith(color: AllColors.black),
+                            ),
                     ),
                   ),
                   SizedBox(width: 12.w),
@@ -345,19 +352,32 @@ class _ProductAnalysisPageState extends State<ProductAnalysisPage>
             },
           ),
 
-          GestureDetector(
-            onTap: () {
-              _logout();
-            },
-            child: Container(
-              width: 40.w,
-              height: 40.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AllColors.grey.withValues(alpha: 0.1),
+          Row(
+            children: [
+              // Search Icon
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoute.searchPage);
+                },
+                child: Container(
+                  width: 40.w,
+                  height: 40.h,
+                  decoration: BoxDecoration(
+                    color: AllColors.blueBackground.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Icon(
+                    Icons.search,
+                    color: AllColors.black,
+                    size: 20.sp,
+                  ),
+                ),
               ),
-              child: Icon(Icons.search, color: AllColors.black, size: 20.sp),
-            ),
+
+              SizedBox(width: 12.w),
+
+              // Profile Icon
+            ],
           ),
         ],
       ),

@@ -115,4 +115,26 @@ abstract class LocaleKeys {
   static const rateLimitHelp = 'rateLimitHelp';
   static const email = 'email';
   static const enterEmail = 'enterEmail';
+  static const profileSettings = 'profileSettings';
+  static const profileUpdatedSuccessfully = 'profileUpdatedSuccessfully';
+  static const name = 'name';
+  static const phoneNumber = 'phoneNumber';
+  static const birthDate = 'birthDate';
+  static const gender = 'gender';
+  static const saveChanges = 'saveChanges';
+  static const nameIsRequired = 'nameIsRequired';
+  static const emailIsRequired = 'emailIsRequired';
+  static const birthDateCannotBeInFuture = 'birthDateCannotBeInFuture';
+  static const invalidBirthDateFormat = 'invalidBirthDateFormat';
+  static const profileSettingsTitle = 'profileSettingsTitle';
+  static const favourite = 'favourite';
+  static const history = 'history';
+  static const darkMode = 'darkMode';
+  static const selectLanguage = 'selectLanguage';
+  static const aboutUs = 'aboutUs';
+  static const contactUs = 'contactUs';
+  static const policyAndPrivacy = 'policyAndPrivacy';
+  static const logOut = 'logOut';
+  static const areYouSureWantToLogOut = 'areYouSureWantToLogOut';
+  static const user = 'user';
 }

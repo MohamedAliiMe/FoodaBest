@@ -5,6 +5,7 @@ import 'package:fooda_best/core/utilities/configs/app_typography.dart';
 import 'package:fooda_best/core/utilities/configs/colors.dart';
 import 'package:fooda_best/core/utilities/routes_navigator/navigator.dart';
 import 'package:fooda_best/core/widgets/base_flexiable_image.dart';
+import 'package:fooda_best/core/widgets/product_card.dart';
 import 'package:fooda_best/features/product_analysis/data/models/product_model/product_model.dart';
 import 'package:fooda_best/features/product_analysis/pages/widgets/nutri_score_widget.dart';
 import 'package:fooda_best/translations/locale_keys.g.dart';
@@ -302,14 +303,6 @@ class ProductDetailPage extends StatelessWidget {
     );
   }
 
-  NutriScoreWidget _buildNutriScoreBarForProduct(ProductModel product) {
-    return NutriScoreWidget(
-      grade: product.nutriScoreGrade ?? 'e',
-      width: 60.w,
-      height: 20.h,
-    );
-  }
-
   Container _buildFoodScoreSection() {
     return Container(
       padding: EdgeInsets.all(20.w),
@@ -480,7 +473,16 @@ class ProductDetailPage extends StatelessWidget {
               final altProduct = alternativeProducts![index];
               return SizedBox(
                 width: 250.w,
-                child: _buildAlternativeProductCard(altProduct),
+                child: ProductCardStyles.alternativeProduct(
+                  product: altProduct,
+                  alternativeNumber: index + 1,
+                  onTap: () {
+                    // Navigate to product detail
+                  },
+                  onFavoriteTap: () {
+                    // Handle favorite
+                  },
+                ),
               );
             },
           ),
@@ -494,128 +496,6 @@ class ProductDetailPage extends StatelessWidget {
           ),
         ),
     ];
-  }
-
-  Container _buildAlternativeProductCard(ProductModel product) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-      decoration: BoxDecoration(
-        color: AllColors.blueBackground.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60.w,
-            height: 60.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.r),
-              color: AllColors.grayLight.withValues(alpha: 0.1),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.r),
-              child: FlexibleImage(
-                source: product.imageUrl,
-                width: 60.w,
-                height: 60.h,
-                fit: BoxFit.cover,
-                placeholder: _buildImagePlaceholder(),
-              ),
-            ),
-          ),
-
-          SizedBox(width: 12.w),
-
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name ?? LocaleKeys.unknownProduct.tr(),
-                  style: tm14.copyWith(
-                    color: AllColors.black,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-                SizedBox(height: 2.h),
-
-                Text(
-                  product.categories?.join(', ') ?? LocaleKeys.food.tr(),
-                  style: tm12.copyWith(color: AllColors.grey),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 2.h),
-                _buildNutriScoreBarForProduct(product),
-              ],
-            ),
-          ),
-
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 32.w,
-                height: 32.h,
-                decoration: BoxDecoration(
-                  color: AllColors.grey.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                child: Icon(
-                  Icons.favorite_border,
-                  color: AllColors.grey,
-                  size: 16.sp,
-                ),
-              ),
-
-              SizedBox(height: 4.h),
-
-              Container(
-                width: 32.w,
-                height: 32.h,
-                decoration: BoxDecoration(
-                  color: AllColors.blue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.refresh, color: AllColors.blue, size: 12.sp),
-                    Text(
-                      '4',
-                      style: tm10.copyWith(
-                        color: AllColors.blue,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.star, color: AllColors.green, size: 12.sp),
-                  SizedBox(width: 2.w),
-                  Text(
-                    '4.5',
-                    style: tm10.copyWith(
-                      color: AllColors.green,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   Container _buildCountryRatingsSection() {

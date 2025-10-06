@@ -90,8 +90,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   void _completeProfile() {
     if (_formKey.currentState!.validate()) {
       _authenticationCubit.updateProfile(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
+        name: '${_firstNameController.text} ${_lastNameController.text}',
         gender: _selectedGender,
         email: _emailController.text,
         dateOfBirth: _selectedDateOfBirth,

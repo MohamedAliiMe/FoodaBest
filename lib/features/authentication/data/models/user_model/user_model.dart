@@ -5,6 +5,7 @@ part 'user_model.g.dart';
 @JsonSerializable()
 class UserModel {
   final String? uid;
+  final String? imageUrl;
   final String? phoneNumber;
   final String? displayName;
   final String? firstName;
@@ -19,6 +20,7 @@ class UserModel {
 
   const UserModel({
     this.uid,
+    this.imageUrl,
     this.phoneNumber,
     this.displayName,
     this.firstName,
@@ -39,6 +41,7 @@ class UserModel {
 
   UserModel copyWith({
     String? uid,
+    String? imageUrl,
     String? phoneNumber,
     String? displayName,
     String? firstName,
@@ -53,6 +56,7 @@ class UserModel {
   }) {
     return UserModel(
       uid: uid ?? this.uid,
+      imageUrl: imageUrl ?? this.imageUrl,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       displayName: displayName ?? this.displayName,
       firstName: firstName ?? this.firstName,

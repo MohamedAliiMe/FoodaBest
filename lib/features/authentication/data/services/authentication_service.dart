@@ -137,8 +137,7 @@ class AuthenticationService {
   }
 
   Future<DataState<UserModel>> updateProfile({
-    required String firstName,
-    required String lastName,
+    required String name,
     required String email,
     String? gender,
     DateTime? dateOfBirth,
@@ -149,14 +148,14 @@ class AuthenticationService {
         return DataFailed('User not authenticated');
       }
 
-      await user.updateDisplayName('$firstName $lastName');
+      await user.updateDisplayName(name);
 
       final updatedUser = UserModel(
         uid: user.uid,
         phoneNumber: user.phoneNumber,
         displayName: user.displayName,
-        firstName: firstName,
-        lastName: lastName,
+        firstName: name,
+        lastName: null,
         gender: gender,
         dateOfBirth: dateOfBirth,
         email: user.email,
